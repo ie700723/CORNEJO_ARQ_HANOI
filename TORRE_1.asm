@@ -41,15 +41,13 @@ Init: # Inicialización
 	j Init
 	
 Init_out: # Salida de inicialización
-	addi $s0, $s0, -4 # Ajusta dirección de memoria  de T1
+	#addi $s0, $s0, -4 # Ajusta dirección de memoria  de T1
 	add $v0, $s0, $zero # Guardar direcciones de retorno
 	jr $ra
 	
 Hanoi: # Rutina para Hanoi
 	bne $a0, $s5, Hanoi_rep # Si n = 1 continúa y guarda la ejecución
-	
-	
-	addi $s3, $s3, -4
+	addi $a1, $a1 , -4
 	lw $t1, 0($a1)	#inicia movimiento de discos		
 	sw $zero, 0($a1)	#	       
 	sw $t1, 0($a3)	#		
@@ -76,22 +74,48 @@ Hanoi_rep: # Recursión
 	#add $a1, $zero, $a1	# origen
 	add $a2, $zero, $a3	# destino
 	add $a3, $zero, $t1	# aux
-	j Hanoi
-ra_1:	
-	addi $t8, $t8, 1
-	# 1, origen, aux, destino
-	add $a0, $s3, $zero	# Argumento n
-	addi $a0, $zero, 1 	# n-1
-	add $a1, $zero, $s0	# origen
-	add $a2, $zero, $s2	# destino
-	add $a3, $zero, $s3	# aux
-	j Hanoi
-ra_2:
-	# n-1 aux, origen, destino
-	add $a0, $s3, $zero	# Argumento n
-	addi $a0, $a0, -1 	# n-1
-	add $a1, $zero, $s0	# origen
-	add $a2, $zero, $s3	# destino
-	add $a3, $zero, $s2	# aux
-	j Hanoi
+	jal Hanoi
+	
+	add $t0, $a2, $zero		
+	add $a2, $a3, $zero	# cambio de orden en las torres 
+	add $a3, $t0, $zero		
+	
+	lw $a0, 0($sp)		#guardamos valor de n y la direcion del r
+	lw $ra, 4($sp)		
+	addi $sp, $sp, 8        #liberamos memoria en el stack 
+	addi $a1, $a1, -4
+	
+	lw $t0, 0($a1)		#inicia el movimiento de discos
+	sw $zero, 0($a1)	
+	sw $t0, 0($a3)		
+	addi $a3, $a3, 4	
+	
+	addi $sp, $sp, -8	# Reserva espacio en el stack 
+	sw $a0, 0($sp)	
+	
+	sw $ra, 4($sp)		#valor de ra en el stack
+	addi $a0, $a0, -1		
+	add $t0, $a1, $zero		
+	add $a1, $a2, $zero		
+	add $a2, $t0, $zero		
+	
+	jal Hanoi
+	
+#ra_1:	
+#	addi $t8, $t8, 1
+#	# 1, origen, aux, destino
+#	add $a0, $s3, $zero	# Argumento n
+#	addi $a0, $zero, 1 	# n-1
+#	add $a1, $zero, $s0	# origen
+#	add $a2, $zero, $s2	# destino
+#	add $a3, $zero, $s3	# aux
+#	j Hanoi
+#ra_2:
+#	# n-1 aux, origen, destino
+#	add $a0, $s3, $zero	# Argumento n
+#	addi $a0, $a0, -1 	# n-1
+#	add $a1, $zero, $s0	# origen
+#	add $a2, $zero, $s3	# destino
+#	add $a3, $zero, $s2	# aux
+#	j Hanoi
 End:
