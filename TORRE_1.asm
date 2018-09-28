@@ -15,7 +15,7 @@
 	ori $s1, 0x40
 	lui $s2, 0x1001 # T3
 	ori $s2, 0x80
-	ori $s3, $zero, 3 # n 
+	ori $s3, $zero, 5 # n 
 	# Movimientos= 2POW(n) - 1
 	ori $s4, $zero, 1
 	sllv $s4, $s4, $s3 
@@ -99,8 +99,18 @@ Hanoi_rep: # Recursión
 	add $a1, $a2, $zero		
 	add $a2, $t0, $zero		
 	
-	jal Hanoi
 	
+	jal Hanoi
+	add $t0, $a1, $zero		# cambiamos el orden de las torres 
+	add $a1, $a2, $zero		 
+	add $a2, $t0, $zero		
+	
+	lw $a0, 0($sp)				
+	lw $ra, 4($sp)			
+	addi $sp, $sp, 8			
+	
+	jr $ra
+
 #ra_1:	
 #	addi $t8, $t8, 1
 #	# 1, origen, aux, destino
